@@ -1,56 +1,37 @@
-[5/2/2026 2:14 PM] گەیلان: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کێبڕکێی گرووپەکان - ٩ کەتەگۆری</title>
+    <title>کێبڕکێی گرووپەکان - ڤێرژنی چاککراو</title>
     <style>
         :root { --main-bg: #0d1117; --card-bg: #161b22; --accent: #58a6ff; --danger: #f85149; --success: #2ea043; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--main-bg); color: white; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        
         .setup-screen, .quiz-screen { width: 98%; max-width: 1400px; text-align: center; margin-top: 20px; }
-        h1 { color: var(--accent); font-size: 26px; }
-        
-        /* ڕێکخستنی ٩ کەتەگۆرییەکە */
-        .categories-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); /* ٣ ستون لە هەر ڕیزێک */
-            gap: 15px; 
-            margin-top: 20px; 
-        }
-        
-        @media (min-width: 1000px) {
-            .categories-grid { grid-template-columns: repeat(9, 1fr); gap: 8px; } /* لە شاشەی گەورە هەمووی لە یەک ڕیزدایە */
-        }
-
+        .categories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        @media (min-width: 1000px) { .categories-grid { grid-template-columns: repeat(9, 1fr); } }
         .category-column { background: var(--card-bg); padding: 8px; border-radius: 10px; border: 1px solid #30363d; }
-        .category-name { font-weight: bold; margin-bottom: 10px; color: var(--accent); font-size: 18px; border-bottom: 2px solid var(--accent); padding-bottom: 5px; min-height: 50px; display: flex; align-items: center; justify-content: center; }
-        
+        .category-name { font-weight: bold; margin-bottom: 10px; color: var(--accent); font-size: 16px; border-bottom: 2px solid var(--accent); padding-bottom: 5px; height: 40px; display: flex; align-items: center; justify-content: center; }
         .cells-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
-        .cell { background: #21262d; border: 1px solid #30363d; color: white; padding: 8px 0; cursor: pointer; border-radius: 5px; font-size: 15px; transition: 0.2s; }
-        .cell:hover { background: var(--accent); color: white; }
+        .cell { background: #21262d; border: 1px solid #30363d; color: white; padding: 8px 0; cursor: pointer; border-radius: 5px; font-size: 14px; }
         .cell.used { background: #0d1117; color: #484f58; cursor: not-allowed; border: 1px dashed #30363d; }
-
-        .question-box { background: var(--card-bg); padding: 40px; border-radius: 20px; margin-top: 30px; display: none; border: 2px solid var(--accent); width: 80%; max-width: 800px; }
-        #question-text { font-size: 28px; margin-bottom: 30px; line-height: 1.5; font-weight: 500; }
-        .timer { font-size: 40px; color: var(--danger); font-weight: bold; margin-bottom: 20px; font-family: monospace; }
-        
-        .option-btn { display: block; width: 100%; padding: 18px; margin: 12px 0; background: #21262d; color: white; border: 2px solid #30363d; border-radius: 12px; cursor: pointer; font-size: 22px; transition: 0.3s; }
-        .correct { background-color: var(--success) !important; border-color: #3fb950 !important; }
-        .wrong { background-color: var(--danger) !important; border-color: #f85149 !important; }
-
-        .group-info { margin-bottom: 15px; font-size: 24px; color: #ecf0f1; background: #21262d; padding: 10px 30px; border-radius: 50px; border: 1px solid var(--accent); }
-        .custom-file-upload { background: var(--accent); color: white; padding: 15px 40px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 20px; display: inline-block; transition: 0.3s; }
-        .custom-file-upload:hover { opacity: 0.8; }
+        .question-box { background: var(--card-bg); padding: 40px; border-radius: 20px; margin-top: 30px; display: none; border: 2px solid var(--accent); width: 85%; }
+        #question-text { font-size: 26px; margin-bottom: 25px; line-height: 1.5; }
+        .timer { font-size: 40px; color: var(--danger); font-weight: bold; margin-bottom: 20px; }
+        .option-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: #21262d; color: white; border: 2px solid #30363d; border-radius: 10px; cursor: pointer; font-size: 20px; }
+        .correct { background-color: var(--success) !important; }
+        .wrong { background-color: var(--danger) !important; }
+        .group-info { margin-bottom: 15px; font-size: 22px; color: #fff; background: #21262d; padding: 10px 25px; border-radius: 50px; border: 1px solid var(--accent); }
+        .import-btn { background: var(--accent); color: white; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 18px; border: none; }
     </style>
 </head>
 <body>
 
     <div id="setup-screen" class="setup-screen">
-        <h1>بەخێرهاتی بۆ یاری کێبڕکێ</h1>
-        <br><br>
-        <label for="file-upload" class="custom-file-upload">داغڵکردنی فایلی ١٨٠ پرسیارەکە (JSON)</label>
-        <input id="file-upload" type="file" style="display:none" accept=".json"/>
+        <h1>بەخێرهاتی بۆ کێبڕکێ</h1>
+        <p>فایلی JSON ئامادە بکە و لێرە دایبنێ</p>
+        <input type="file" id="file-input" style="display:none" accept=".json">
+        <button class="import-btn" onclick="document.getElementById('file-input').click()">هەڵبژاردنی فایلی پرسیارەکان</button>
     </div>
 
     <div id="main-game" style="display:none" class="setup-screen">
@@ -68,21 +49,28 @@
     let allData = {};
     let currentGroup = 1;
     let timerInterval;
-[5/2/2026 2:14 PM] گەیلان: const categories = ["دەنگ", "مێژوو", "هونەری", "وەرزشی", "منداڵان", "تەندروستی", "زانستی", "کەسی", "ئاینی"];
+    const categories = ["دەنگ", "مێژوو", "هونەری", "وەرزشی", "منداڵان", "تەندروستی", "زانستی", "کەسی", "ئاینی"];
 
-    document.getElementById('file-upload').addEventListener('change', function(e) {
+    document.getElementById('file-input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = function(event) {
             try {
-                allData = JSON.parse(event.target.result);
+                const data = JSON.parse(event.target.result);
+                allData = data;
+                console.log("فایلەکە بە سەرکەوتوویی خوێنرایەوە:", allData);
                 renderGrid();
-                document.getElementById('setup-screen').style.display = 'none';
+                document.getElementById('setup-screen').style.
+[5/2/2026 2:34 PM] گەیلان: display = 'none';
                 document.getElementById('main-game').style.display = 'block';
-            } catch(err) {
-                alert("هەڵە لە فایلی JSON هەیە!");
+            } catch (err) {
+                alert("خەتایەک لە فایلی JSON هەیە: " + err.message);
+                console.error(err);
             }
         };
-        reader.readAsText(e.target.files[0]);
+        reader.readAsText(file);
     });
 
     function renderGrid() {
@@ -109,14 +97,14 @@
     }
 
     function startQuestion(cat, num) {
-        if(!allData[cat] || !allData[cat][num-1]) {
-            alert("ئەم پرسیارە لە فایلەکەدا بوونی نییە!");
+        if (!allData[cat] || !allData[cat][num-1]) {
+            alert("ئەم کەتەگۆرییە یان ئەم ژمارەیە لە فایلەکەتدا نییە! تکایە فایلی JSON بپشکنە.");
             return;
         }
+
         const q = allData[cat][num-1];
         document.getElementById('main-game').style.display = 'none';
-        const screen = document.getElementById('quiz-screen');
-        screen.style.display = 'block';
+        document.getElementById('quiz-screen').style.display = 'block';
         document.getElementById('question-text').innerText = q.question;
         
         const opts = document.getElementById('options-container');
@@ -135,15 +123,14 @@
     function startTimer() {
         let time = 25;
         document.getElementById('timer').innerText = time;
-        document.getElementById('timer').style.color = "var(--danger)";
         clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             time--;
             document.getElementById('timer').innerText = time;
             if(time <= 0) {
                 clearInterval(timerInterval);
-                document.getElementById('question-text').innerText = "کات تەواو بوو! ⏱️";
-                setTimeout(backToHome, 2000);
+                alert("کات تەواو بوو!");
+                backToHome();
             }
         }, 1000);
     }
@@ -161,8 +148,11 @@
         }
 
         setTimeout(() => {
-            document.getElementById(`cell-${cat}-${num}`).classList.add('used');
-            document.getElementById(`cell-${cat}-${num}`).disabled = true;
+            const cell = document.getElementById(`cell-${cat}-${num}`);
+            if(cell) {
+                cell.classList.add('used');
+                cell.disabled = true;
+            }
             backToHome();
         }, 3000);
     }
@@ -173,6 +163,6 @@
         currentGroup = currentGroup === 1 ? 2 : 1;
         document.getElementById('turn-info').innerText = سەرەی: گرووپی ${currentGroup};
     }
-[5/2/2026 2:14 PM] گەیلان: </script>
+</script>
 </body>
 </html>
