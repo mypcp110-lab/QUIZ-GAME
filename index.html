@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کێبڕکێی گرووپەکان - دیزاینی پاک</title>
+    <title>کێبڕکێی گرووپەکان - وەشانی نوێکراوە</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
 
@@ -15,7 +15,6 @@
             --text-white: #ffffff;
         }
 
-        /* ڕێگری لە دیاریکردنی دەق و جوانکردنی فۆنت */
         * {
             user-select: none;
             -webkit-user-select: none;
@@ -35,7 +34,7 @@
             overflow-x: hidden;
         }
 
-        /* --- شاشەی چوونەژوورەوە --- */
+        /* --- Login Screen --- */
         .login-container {
             background: var(--card-bg);
             padding: 50px;
@@ -59,10 +58,6 @@
             outline: none;
         }
 
-        /* لادانی پڵەیسهۆڵدەر لە کاتی فۆکەس */
-        input:focus::placeholder { color: transparent; }
-        input:focus::-webkit-input-placeholder { color: transparent; }
-
         .login-btn {
             background: var(--accent-blue);
             color: black;
@@ -75,9 +70,8 @@
             font-size: 18px;
             transition: 0.2s;
         }
-        .login-btn:active { transform: scale(0.95); }
 
-        /* --- شاشەی ڕێکخستن (Setup) --- */
+        /* --- Setup Screen --- */
         .setup-box {
             display: flex; 
             flex-direction: column; 
@@ -93,13 +87,12 @@
             padding: 18px;
             font-size: 18px;
             font-weight: bold;
-            border-radius: 30px; /* شێوەی دەقاوەق وەک وێنەکان */
+            border-radius: 30px;
             cursor: pointer;
             transition: 0.3s;
         }
-        .action-btn:hover { background: #21262d; border-color: var(--accent-blue); }
 
-        /* --- یاری سەرەکی --- */
+        /* --- Main Game View --- */
         .main-wrapper { display: none; width: 95%; max-width: 1100px; text-align: center; }
 
         .categories-grid { 
@@ -116,7 +109,7 @@
             border: 1px solid var(--border-color);
             cursor: pointer;
             font-size: 26px;
-            font-weight: 900; /* فۆنتی زۆر ئەستوور */
+            font-weight: 900;
             transition: 0.3s ease;
         }
 
@@ -126,7 +119,7 @@
             transform: translateY(-5px);
         }
 
-        /* --- بەشی ژمارەکان --- */
+        /* --- Numbers Grid --- */
         .numbers-view { display: none; }
         
         .numbers-grid {
@@ -148,7 +141,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .number-cell:hover { border-color: var(--accent-blue); background: #21262d; }
+
         .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); }
 
         .back-btn {
@@ -165,20 +158,77 @@
             z-index: 100;
         }
 
+        /* --- Modal (Quiz Window) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--accent-blue);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.2);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .option-btn {
+            padding: 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #0d1117;
+            color: white;
+            transition: 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .option-btn.correct { background: #2ea043 !important; border-color: #3fb950; }
+        .option-btn.wrong { background: #da3633 !important; border-color: #f85149; }
+
+        .close-modal {
+            margin-top: 30px;
+            background: #f85149;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         h1.title-display { font-weight: 900; font-size: 45px; margin-bottom: 40px; }
     </style>
 </head>
 <body>
 
-<!-- ١. چوونەژوورەوە -->
+<!-- Login -->
 <div id="login-screen" class="login-container">
     <h2>چوونەژوورەوە</h2>
-    <input type="text" id="user" placeholder="UserName" autocomplete="off">
+    <input type="text" id="user" placeholder="UserName">
     <input type="password" id="pass" placeholder="Password">
     <button class="login-btn" onclick="handleLogin()">Login</button>
 </div>
 
-<!-- ٢. شاشەی کارەکان (Import/Restart) -->
+<!-- Setup -->
 <div id="setup-screen" style="display:none; text-align: center;">
     <h1 class="title-display">بەخێربێن</h1>
     <div class="setup-box">
@@ -190,17 +240,25 @@
     <input type="file" id="file-input" style="display:none" accept=".json">
 </div>
 
-<!-- ٣. کەتەگۆرییەکان -->
+<!-- Main Game -->
 <div id="main-game" class="main-wrapper">
     <div id="categories-view">
         <div class="categories-grid" id="cat-container"></div>
     </div>
 
-    <!-- ٤. ژمارەکان -->
     <div id="numbers-view" class="numbers-view">
         <button class="back-btn" onclick="showCats()">گەڕانەوە</button>
         <h1 id="cat-title" class="title-display" style="color: var(--accent-blue);"></h1>
         <div id="num-container" class="numbers-grid"></div>
+    </div>
+</div>
+
+<!-- Quiz Modal -->
+<div id="quiz-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2 id="modal-question"></h2>
+        <div id="modal-options" class="options-grid"></div>
+        <button class="close-modal" onclick="closeModal()">داخستن</button>
     </div>
 </div>
 
@@ -228,7 +286,7 @@
             try {
                 allData = JSON.parse(event.target.result);
                 startApp();
-            } catch(e) { alert("فایلەکە هەڵەیە!"); }
+            } catch(e) { alert("فایلەکە هەڵەیە یان فۆرماتەکەی تێکچووە!"); }
         };
         reader.readAsText(file);
     });
@@ -254,7 +312,6 @@
         const container = document.getElementById('num-container');
         container.innerHTML = '';
 
-        // دۆزینەوەی لیستەی پرسیارەکانی ئەو کەتەگۆرییەی کلیکی لێکراوە
         const categoryQuestions = allData[cat] || [];
 
         for(let i=1; i<=20; i++) {
@@ -265,23 +322,47 @@
 
             btn.onclick = () => {
                 if(!usedQuestions[qKey]) {
-                    // (i-1) بەکاردێت چونکە لیستی جەیسۆن لە 0 دەستپێدەکات
-                    const questionData = categoryQuestions[i - 1];
-
+                    const questionData = categoryQuestions[i - 1]; // Indexing for JSON[cite: 1]
                     if (questionData) {
-                        // لێرە پرسیارەکە پیشان دەدەین
-                        alert("پرسیار: " + questionData.question + "\n\n" + 
-                              "وەڵامەکان: " + questionData.options.join(" - "));
-                        
-                        usedQuestions[qKey] = true;
-                        btn.classList.add('used');
+                        openQuiz(questionData, qKey, btn);
                     } else {
-                        alert("ببوورە، پرسیاری ژمارە " + i + " لە کەتەگۆری (" + cat + ") بەردەست نییە لە فایلەکەدا.");
+                        alert("ئەم پرسیارە لەناو فایلەکەدا نییە.");
                     }
                 }
             };
             container.appendChild(btn);
         }
+    }
+
+    function openQuiz(data, key, element) {
+        const modal = document.getElementById('quiz-modal');
+        const qText = document.getElementById('modal-question');
+        const oContainer = document.getElementById('modal-options');
+
+        qText.innerText = data.question;
+        oContainer.innerHTML = '';
+
+        data.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => {
+                if(opt === data.answer) {
+                    btn.classList.add('correct');
+                    usedQuestions[key] = true;
+                    element.classList.add('used');
+                } else {
+                    btn.classList.add('wrong');
+                }
+            };
+            oContainer.appendChild(btn);
+        });
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('quiz-modal').style.display = 'none';
     }
 
     function showCats() {
