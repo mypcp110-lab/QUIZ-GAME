@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کێبڕکێی گرووپەکان - دیزاینی کۆتایی</title>
+    <title>کێبڕکێی گرووپەکان - وەشانی بێ کێشە</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
 
@@ -11,15 +11,17 @@
             --main-bg: #0b0e14; 
             --card-bg: #161b22; 
             --accent-blue: #58a6ff; 
+            --hover-blue: #1f6feb;
             --border-color: #30363d;
             --text-white: #ffffff;
+            --correct-green: #2ea043;
+            --wrong-red: #f85149;
         }
 
         * {
             user-select: none;
             box-sizing: border-box;
             font-family: 'Noto Sans Arabic', Tahoma, sans-serif;
-            -webkit-font-smoothing: antialiased;
         }
 
         body { 
@@ -30,10 +32,9 @@
             justify-content: center; 
             align-items: center; 
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* --- شاشەی چوونەژوورەوە --- */
+        /* --- Login --- */
         .login-container {
             background: var(--card-bg);
             padding: 50px;
@@ -41,10 +42,7 @@
             border: 1px solid var(--accent-blue);
             text-align: center;
             width: 380px;
-            box-shadow: 0 0 20px rgba(88, 166, 255, 0.1);
         }
-
-        .login-container h2 { font-weight: 900; margin-bottom: 30px; font-size: 28px; }
 
         .login-container input {
             width: 100%;
@@ -58,9 +56,7 @@
             outline: none;
         }
 
-        /* لادانی نوسینی کاڵ لە کاتی کلیک کردن */
         input:focus::placeholder { color: transparent; }
-        input:focus::-webkit-input-placeholder { color: transparent; }
 
         .login-btn {
             background: var(--accent-blue);
@@ -74,7 +70,7 @@
             font-size: 18px;
         }
 
-        /* --- شاشەی Setup --- */
+        /* --- Setup --- */
         .setup-box { display: flex; flex-direction: column; gap: 15px; width: 320px; margin: 0 auto; }
         .action-btn {
             background: var(--card-bg);
@@ -87,9 +83,8 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        .action-btn:hover { border-color: var(--accent-blue); background: #21262d; }
 
-        /* --- یاری سەرەکی --- */
+        /* --- Game Main --- */
         .main-wrapper { display: none; width: 95%; max-width: 1100px; text-align: center; }
 
         .categories-grid { 
@@ -111,7 +106,7 @@
         }
         .category-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
 
-        /* --- ژمارەکان --- */
+        /* --- Numbers Grid --- */
         .numbers-view { display: none; }
         .numbers-grid {
             display: grid;
@@ -130,7 +125,6 @@
             border-radius: 12px;
             cursor: pointer;
         }
-        .number-cell:hover { border-color: var(--accent-blue); }
         .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); }
 
         .back-btn {
@@ -139,7 +133,7 @@
             color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer;
         }
 
-        /* --- پەنجەرەی پرسیار (Modal) --- */
+        /* --- Modal --- */
         .modal {
             display: none; position: fixed; z-index: 2000;
             left: 0; top: 0; width: 100%; height: 100%;
@@ -155,62 +149,54 @@
         .option-btn {
             background: #0d1117; border: 1px solid var(--border-color);
             color: white; padding: 18px; border-radius: 10px;
-            cursor: pointer; font-size: 19px; transition: 0.3s;
+            cursor: pointer; font-size: 19px; transition: 0.2s;
         }
-        .option-btn:hover { background: var(--accent-blue); color: black; }
-        .close-modal {
-            margin-top: 30px; background: #f85149; border: none;
-            color: white; padding: 10px 30px; border-radius: 8px; cursor: pointer;
-        }
+        .option-btn:hover:not(:disabled) { background: var(--hover-blue); }
+        .option-btn:disabled { cursor: default; }
+
+        .correct { background-color: var(--correct-green) !important; border-color: var(--correct-green) !important; color: white !important; }
+        .wrong { background-color: var(--wrong-red) !important; border-color: var(--wrong-red) !important; color: white !important; }
     </style>
 </head>
 <body>
 
-<!-- ١. چوونەژوورەوە -->
 <div id="login-screen" class="login-container">
-    <h2>چوونەژوورەوە</h2>
+    <h2 style="font-weight: 900;">چوونەژوورەوە</h2>
     <input type="text" id="user" placeholder="UserName" autocomplete="off">
     <input type="password" id="pass" placeholder="Password">
     <button class="login-btn" onclick="handleLogin()">Login</button>
 </div>
 
-<!-- ٢. شاشەی Setup -->
 <div id="setup-screen" style="display:none; text-align: center;">
-    <h1 style="font-weight: 900; font-size: 45px; margin-bottom: 40px;">بەخێربێن</h1>
+    <h1 style="font-weight: 900; font-size: 45px;">بەخێربێن</h1>
     <div class="setup-box">
         <button class="action-btn" onclick="document.getElementById('file-input').click()">Import file</button>
         <button class="action-btn" onclick="location.reload()">Restart</button>
-        <button class="action-btn">Delete</button>
-        <button class="action-btn">Leave</button>
     </div>
     <input type="file" id="file-input" style="display:none" accept=".json">
 </div>
 
-<!-- ٣. یاریەکە -->
 <div id="main-game" class="main-wrapper">
     <div id="categories-view">
         <div class="categories-grid" id="cat-container"></div>
     </div>
     <div id="numbers-view" class="numbers-view">
         <button class="back-btn" onclick="showCats()">گەڕانەوە</button>
-        <h1 id="cat-title" style="font-weight: 900; font-size: 40px; margin-bottom: 30px; color: var(--accent-blue);"></h1>
+        <h1 id="cat-title" style="font-weight: 900; font-size: 40px; color: var(--accent-blue);"></h1>
         <div id="num-container" class="numbers-grid"></div>
     </div>
 </div>
 
-<!-- ٤. مۆدێڵی پرسیار -->
 <div id="question-modal" class="modal">
     <div class="modal-content">
         <h2 id="modal-q-text" style="font-weight: 900; font-size: 32px;"></h2>
         <div class="options-grid" id="modal-options"></div>
-        <button class="close-modal" onclick="closeModal()">داخستن</button>
     </div>
 </div>
 
 <script>
     let allData = {};
     let usedQuestions = {};
-    // کەتەگۆرییەکان دەبێت ڕێک وەک ناوەکانی ناو فایلە JSONـەکەت بن[cite: 1, 2]
     const categories = ["دەنگ", "مێژوو", "هونەری", "وەرزشی", "منداڵان", "تەندروستی", "زانستی", "کەسی", "ئاینی"];
 
     function handleLogin() {
@@ -224,9 +210,9 @@
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                allData = JSON.parse(event.target.result); // خوێندنەوەی پرسیارەکان لە فایلی دەرەکی[cite: 3]
+                allData = JSON.parse(event.target.result);[cite: 1, 2, 3]
                 startApp();
-            } catch(e) { alert("هەڵە لە فایلی JSON هەیە!"); }
+            } catch(e) { alert("هەڵە لە فایلەکەدا هەیە!"); }
         };
         reader.readAsText(e.target.files[0]);
     });
@@ -251,8 +237,7 @@
         document.getElementById('cat-title').innerText = cat;
         const container = document.getElementById('num-container');
         container.innerHTML = '';
-        
-        const categoryData = allData[cat] || []; // وەرگرتنی لیستەکە لە فایلەکە[cite: 1]
+        const categoryData = allData[cat] || [];[cite: 1, 2]
 
         for(let i=0; i<20; i++) {
             const btn = document.createElement('div');
@@ -261,36 +246,58 @@
             btn.innerText = i + 1;
             btn.onclick = () => {
                 if(!usedQuestions[qKey] && categoryData[i]) {
-                    openModal(categoryData[i]);
-                    usedQuestions[qKey] = true;
-                    btn.classList.add('used');
-                } else if (!categoryData[i]) {
-                    alert("ئەم ژمارەیە پرسیاری بۆ دانەنراوە لە فایلەکەدا!");
+                    openModal(categoryData[i], qKey);
                 }
             };
             container.appendChild(btn);
         }
     }
 
-    function openModal(data) {
+    function openModal(data, qKey) {
         document.getElementById('modal-q-text').innerText = data.question;
         const optContainer = document.getElementById('modal-options');
         optContainer.innerHTML = '';
+        
         data.options.forEach(opt => {
             const b = document.createElement('button');
             b.className = 'option-btn';
             b.innerText = opt;
             b.onclick = () => {
-                if(opt === data.answer) { b.style.background = "#2ea043"; alert("ڕاستە!"); }
-                else { b.style.background = "#f85149"; alert("هەڵەیە! وەڵام: " + data.answer); }
+                // کاتێک کلیک کرا، هەموو دوگمەکان بوەستێنە
+                const allButtons = optContainer.querySelectorAll('button');
+                allButtons.forEach(btn => btn.disabled = true);
+                
+                usedQuestions[qKey] = true;
+
+                if(opt === data.answer) {
+                    b.classList.add('correct');
+                } else {
+                    b.classList.add('wrong');
+                    // نیشاندانی وەڵامی ڕاست بە سەوزی
+                    allButtons.forEach(btn => {
+                        if(btn.innerText === data.answer) btn.classList.add('correct');
+                    });
+                }
+
+                // دوای ١.٥ چرکە ئۆتۆماتیکی دابخرێت و بگەڕێتەوە سەر کەتەگۆرییەکان
+                setTimeout(() => {
+                    closeModal();
+                }, 1500);
             };
             optContainer.appendChild(b);
         });
         document.getElementById('question-modal').style.display = 'flex';
     }
 
-    function closeModal() { document.getElementById('question-modal').style.display = 'none'; }
-    function showCats() { document.getElementById('numbers-view').style.display = 'none'; document.getElementById('categories-view').style.display = 'block'; }
+    function closeModal() {
+        document.getElementById('question-modal').style.display = 'none';
+        showCats();
+    }
+
+    function showCats() {
+        document.getElementById('numbers-view').style.display = 'none';
+        document.getElementById('categories-view').style.display = 'block';
+    }
 </script>
 </body>
 </html>
