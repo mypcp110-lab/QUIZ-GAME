@@ -2,54 +2,51 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>کێبڕکێی گرووپەکان - وەشانی جێگیر</title>
+    <title>کێبڕکێی کۆتایی</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
         :root { --bg: #0b0e14; --card: #161b22; --blue: #58a6ff; --correct: #2ea043; --wrong: #f85149; }
         * { user-select: none; box-sizing: border-box; font-family: 'Noto Sans Arabic', sans-serif; }
-        body { background: var(--bg); color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .wrapper { width: 90%; max-width: 1000px; text-align: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
-        .card { background: var(--card); padding: 45px 10px; border-radius: 15px; border: 1px solid #30363d; cursor: pointer; font-size: 24px; font-weight: 900; transition: 0.3s; }
+        body { background: var(--bg); color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        .wrapper { width: 95%; max-width: 1000px; text-align: center; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: var(--card); padding: 40px 10px; border-radius: 15px; border: 1px solid #30363d; cursor: pointer; font-size: 22px; font-weight: 900; transition: 0.3s; }
         .card:hover { border-color: var(--blue); transform: translateY(-3px); }
-        .num-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; margin-top: 20px; }
-        .num-cell { background: var(--card); border: 1px solid #30363d; padding: 20px; font-size: 22px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .num-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); align-items: center; justify-content: center; z-index: 99; }
-        .modal-content { background: var(--card); padding: 40px; border-radius: 20px; border: 2px solid var(--blue); width: 90%; max-width: 700px; text-align: center; }
-        .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
-        .opt-btn { background: #0d1117; border: 1px solid #30363d; color: white; padding: 18px; border-radius: 12px; cursor: pointer; font-size: 20px; transition: 0.2s; }
-        .correct { background: var(--correct) !important; border-color: var(--correct) !important; }
-        .wrong { background: var(--wrong) !important; border-color: var(--wrong) !important; }
+        .num-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 10px; margin-top: 20px; }
+        .num-cell { background: var(--card); border: 1px solid #30363d; padding: 20px; font-size: 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .num-cell.used { opacity: 0.2; cursor: not-allowed; background: #000; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: var(--card); padding: 40px; border-radius: 20px; border: 2px solid var(--blue); width: 90%; max-width: 650px; text-align: center; }
+        .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
+        .opt-btn { background: #0d1117; border: 1px solid #30363d; color: white; padding: 15px; border-radius: 10px; cursor: pointer; font-size: 18px; }
+        .correct { background: var(--correct) !important; border-color: var(--correct) !important; color: white !important; }
+        .wrong { background: var(--wrong) !important; border-color: var(--wrong) !important; color: white !important; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <!-- بەشی کەتەگۆرییەکان -->
     <div id="cat-view">
-        <h1 style="font-weight:900; font-size: 38px; color: var(--blue); margin-bottom: 30px;">کەتەگۆرییەکان</h1>
+        <h1 style="font-weight:900; font-size: 35px; color: var(--blue);">کەتەگۆرییەکان</h1>
         <div id="cat-grid" class="grid"></div>
     </div>
 
-    <!-- بەشی ژمارەی پرسیارەکان -->
     <div id="num-view" style="display:none">
-        <h1 id="title" style="color:var(--blue); font-weight:900; font-size: 35px;"></h1>
+        <h1 id="title" style="color:var(--blue); font-weight:900; font-size: 32px;"></h1>
         <div id="num-grid" class="num-grid"></div>
-        <button onclick="showCats()" style="margin-top:30px; background:none; border:1px solid #555; color:#aaa; padding:10px 20px; border-radius:5px; cursor:pointer;">گەڕانەوە</button>
+        <button onclick="backToCats()" style="margin-top:30px; background:#333; border:none; color:white; padding:10px 25px; border-radius:5px; cursor:pointer;">گەڕانەوە</button>
     </div>
 </div>
 
-<!-- پەنجەرەی پرسیار -->
 <div id="modal" class="modal">
     <div class="modal-content">
-        <h2 id="q-text" style="font-size: 32px; font-weight:900; margin-bottom: 20px;"></h2>
+        <h2 id="q-text" style="font-size: 28px; font-weight:900; line-height: 1.5;"></h2>
         <div id="opts" class="opt-grid"></div>
     </div>
 </div>
 
 <script>
-    // داتاکانی فایلی data_2.json
+    // لێرەدا داتاکانی data_2.json جێگیر کراوە
     const quizData = {
         "کەسی": [
             { "question": "باشترین دەنگ؟", "options": ["گۆران حاجی حمەخان", "بەنگین", "ئارام مستەوفی", "گۆران ناضم"], "answer": "گۆران ناضم" },
@@ -68,69 +65,80 @@
 
     let used = {};
 
-    // پیشاندانی کەتەگۆرییەکان بەپێی داتاکە
-    function showCats() {
+    function backToCats() {
         document.getElementById('num-view').style.display = 'none';
         document.getElementById('cat-view').style.display = 'block';
-        const g = document.getElementById('cat-grid');
-        g.innerHTML = '';
-        Object.keys(quizData).forEach(c => {
-            let div = document.createElement('div');
-            div.className = 'card';
-            div.innerText = c;
-            div.onclick = () => showNums(c);
-            g.appendChild(div);
+    }
+
+    function initCats() {
+        const grid = document.getElementById('cat-grid');
+        grid.innerHTML = '';
+        Object.keys(quizData).forEach(catName => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerText = catName;
+            card.onclick = () => showNumbers(catName);
+            grid.appendChild(card);
         });
     }
 
-    // پیشاندانی ژمارەکان بەپێی چەندیی پرسیارەکان[cite: 1]
-    function showNums(c) {
+    function showNumbers(catName) {
         document.getElementById('cat-view').style.display = 'none';
-        document.getElementById('num-view').style.display = 'block';
-        document.getElementById('title').innerText = c;
-        const g = document.getElementById('num-grid');
-        g.innerHTML = '';
-        quizData[c].forEach((q, i) => {
-            let n = document.createElement('div');
-            let key = c + i;
-            n.className = 'num-cell' + (used[key] ? ' used' : '');
-            n.innerText = i + 1;
-            n.onclick = () => { if(!used[key]) openQ(q, key); };
-            g.appendChild(n);
+        const numView = document.getElementById('num-view');
+        numView.style.display = 'block';
+        document.getElementById('title').innerText = catName;
+        
+        const grid = document.getElementById('num-grid');
+        grid.innerHTML = '';
+        
+        const questions = quizData[catName];[cite: 1]
+        questions.forEach((q, index) => {
+            const cell = document.createElement('div');
+            const questionId = catName + index;
+            cell.className = 'num-cell' + (used[questionId] ? ' used' : '');
+            cell.innerText = index + 1;
+            cell.onclick = () => {
+                if (!used[questionId]) openQuestion(q, questionId);
+            };
+            grid.appendChild(cell);
         });
     }
 
-    // کردنەوەی پەنجەرەی پرسیار و وەڵام
-    function openQ(q, key) {
+    function openQuestion(q, id) {
         document.getElementById('q-text').innerText = q.question;
-        const o = document.getElementById('opts');
-        o.innerHTML = '';
+        const optGrid = document.getElementById('opts');
+        optGrid.innerHTML = '';
+        
         q.options.forEach(opt => {
-            let b = document.createElement('button');
-            b.className = 'opt-btn';
-            b.innerText = opt;
-            b.onclick = () => {
-                const all = o.querySelectorAll('button');
-                all.forEach(x => x.disabled = true);
-                used[key] = true;
-                if(opt === q.answer) {
-                    b.classList.add('correct');
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = opt;
+            btn.onclick = () => {
+                const buttons = optGrid.querySelectorAll('button');
+                buttons.forEach(b => b.disabled = true);
+                used[id] = true;
+                
+                if (opt === q.answer) {
+                    btn.classList.add('correct');
                 } else {
-                    b.classList.add('wrong');
-                    all.forEach(x => { if(x.innerText === q.answer) x.classList.add('correct'); });
+                    btn.classList.add('wrong');
+                    buttons.forEach(b => {
+                        if (b.innerText === q.answer) b.classList.add('correct');
+                    });
                 }
-                // گەڕانەوەی خۆکار دوای ١ چرکە
+                
                 setTimeout(() => {
                     document.getElementById('modal').style.display = 'none';
-                    showCats();
-                }, 1000);
+                    backToCats();
+                }, 1500);
             };
-            o.appendChild(b);
+            optGrid.appendChild(btn);
         });
         document.getElementById('modal').style.display = 'flex';
     }
 
-    showCats(); // دەستپێکردنی بەرنامەکە
+    // دەستپێکردنی بەرنامەکە
+    initCats();
 </script>
 </body>
 </html>
