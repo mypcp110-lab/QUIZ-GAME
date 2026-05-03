@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کێبڕکێی گرووپەکان - وەشانی نوێکراوە</title>
+    <title>کێبڕکێی گرووپەکان - وەشانی کۆتایی</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
 
@@ -17,10 +17,8 @@
 
         * {
             user-select: none;
-            -webkit-user-select: none;
             box-sizing: border-box;
             font-family: 'Noto Sans Arabic', Tahoma, sans-serif;
-            -webkit-font-smoothing: antialiased;
         }
 
         body { 
@@ -31,55 +29,11 @@
             justify-content: center; 
             align-items: center; 
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* --- Login Screen --- */
-        .login-container {
-            background: var(--card-bg);
-            padding: 50px;
-            border-radius: 20px;
-            border: 1px solid var(--accent-blue);
-            text-align: center;
-            width: 380px;
-        }
-
-        .login-container h2 { font-weight: 900; margin-bottom: 30px; font-size: 28px; }
-
-        .login-container input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #0d1117;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: white;
-            text-align: center;
-            outline: none;
-        }
-
-        .login-btn {
-            background: var(--accent-blue);
-            color: black;
-            border: none;
-            padding: 10px 35px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            font-size: 18px;
-            transition: 0.2s;
         }
 
         /* --- Setup Screen --- */
-        .setup-box {
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-            width: 320px; 
-            margin: 0 auto;
-        }
-
+        #setup-screen { text-align: center; }
+        .setup-box { display: flex; flex-direction: column; gap: 15px; width: 320px; margin: 0 auto; }
         .action-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -92,16 +46,9 @@
             transition: 0.3s;
         }
 
-        /* --- Main Game View --- */
+        /* --- Main Game --- */
         .main-wrapper { display: none; width: 95%; max-width: 1100px; text-align: center; }
-
-        .categories-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 20px; 
-            margin-top: 20px;
-        }
-
+        .categories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
         .category-card {
             background: var(--card-bg);
             padding: 55px 20px;
@@ -110,26 +57,13 @@
             cursor: pointer;
             font-size: 26px;
             font-weight: 900;
-            transition: 0.3s ease;
+            transition: 0.3s;
         }
-
-        .category-card:hover { 
-            border-color: var(--accent-blue);
-            background: #1c2128;
-            transform: translateY(-5px);
-        }
+        .category-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
 
         /* --- Numbers Grid --- */
         .numbers-view { display: none; }
-        
-        .numbers-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
+        .numbers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; max-width: 900px; margin: 0 auto; }
         .number-cell {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -139,37 +73,20 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            transition: 0.2s;
         }
+        .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); pointer-events: none; }
 
-        .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); }
-
-        .back-btn {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            background: #21262d;
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            z-index: 100;
-        }
-
-        /* --- Modal (Quiz Window) --- */
+        /* --- Quiz Modal --- */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-
         .modal-content {
             background: var(--card-bg);
             border: 2px solid var(--accent-blue);
@@ -178,105 +95,69 @@
             width: 90%;
             max-width: 700px;
             text-align: center;
-            box-shadow: 0 0 20px rgba(88, 166, 255, 0.2);
         }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
         .option-btn {
             padding: 20px;
             border-radius: 10px;
-            border: none;
+            border: 1px solid var(--border-color);
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             background: #0d1117;
             color: white;
             transition: 0.3s;
-            border: 1px solid var(--border-color);
         }
-
         .option-btn.correct { background: #2ea043 !important; border-color: #3fb950; }
         .option-btn.wrong { background: #da3633 !important; border-color: #f85149; }
-
-        .close-modal {
-            margin-top: 30px;
-            background: #f85149;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
+        
+        /* --- Timer --- */
+        #timer-display {
+            font-size: 40px;
+            font-weight: 900;
+            color: #ffde59;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 222, 89, 0.5);
         }
 
-        h1.title-display { font-weight: 900; font-size: 45px; margin-bottom: 40px; }
+        .title-display { font-weight: 900; font-size: 45px; margin-bottom: 40px; }
     </style>
 </head>
 <body>
 
-<!-- Login -->
-<div id="login-screen" class="login-container">
-    <h2>چوونەژوورەوە</h2>
-    <input type="text" id="user" placeholder="UserName">
-    <input type="password" id="pass" placeholder="Password">
-    <button class="login-btn" onclick="handleLogin()">Login</button>
-</div>
-
-<!-- Setup -->
-<div id="setup-screen" style="display:none; text-align: center;">
+<div id="setup-screen">
     <h1 class="title-display">بەخێربێن</h1>
     <div class="setup-box">
         <button class="action-btn" onclick="document.getElementById('file-input').click()">Import file</button>
         <button class="action-btn" onclick="location.reload()">Restart</button>
-        <button class="action-btn">Delete</button>
-        <button class="action-btn">Leave</button>
     </div>
     <input type="file" id="file-input" style="display:none" accept=".json">
 </div>
 
-<!-- Main Game -->
 <div id="main-game" class="main-wrapper">
     <div id="categories-view">
         <div class="categories-grid" id="cat-container"></div>
     </div>
 
     <div id="numbers-view" class="numbers-view">
-        <button class="back-btn" onclick="showCats()">گەڕانەوە</button>
         <h1 id="cat-title" class="title-display" style="color: var(--accent-blue);"></h1>
         <div id="num-container" class="numbers-grid"></div>
     </div>
 </div>
 
-<!-- Quiz Modal -->
 <div id="quiz-modal" class="modal-overlay">
     <div class="modal-content">
+        <div id="timer-display">25</div>
         <h2 id="modal-question"></h2>
         <div id="modal-options" class="options-grid"></div>
-        <button class="close-modal" onclick="closeModal()">داخستن</button>
     </div>
 </div>
 
 <script>
     let allData = {};
     let usedQuestions = {};
+    let timerInterval;
     const categories = ["دەنگ", "مێژوو", "هونەری", "وەرزشی", "منداڵان", "تەندروستی", "زانستی", "کەسی", "ئاینی"];
-
-    function handleLogin() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
-        if(u === "admin" && p === "1234") {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('setup-screen').style.display = 'block';
-        } else {
-            alert("ناوی بەکارهێنەر یان پاسوۆرد هەڵەیە!");
-        }
-    }
 
     document.getElementById('file-input').addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -286,7 +167,7 @@
             try {
                 allData = JSON.parse(event.target.result);
                 startApp();
-            } catch(e) { alert("فایلەکە هەڵەیە یان فۆرماتەکەی تێکچووە!"); }
+            } catch(e) { alert("هەڵە لە فایلەکەدا هەیە!"); }
         };
         reader.readAsText(file);
     });
@@ -319,16 +200,9 @@
             const qKey = `${cat}-${i}`;
             btn.className = 'number-cell' + (usedQuestions[qKey] ? ' used' : '');
             btn.innerText = i;
-
             btn.onclick = () => {
-                if(!usedQuestions[qKey]) {
-                    const questionData = categoryQuestions[i - 1]; // Indexing for JSON[cite: 1]
-                    if (questionData) {
-                        openQuiz(questionData, qKey, btn);
-                    } else {
-                        alert("ئەم پرسیارە لەناو فایلەکەدا نییە.");
-                    }
-                }
+                const questionData = categoryQuestions[i - 1];
+                if (questionData) openQuiz(questionData, qKey, btn);
             };
             container.appendChild(btn);
         }
@@ -338,36 +212,61 @@
         const modal = document.getElementById('quiz-modal');
         const qText = document.getElementById('modal-question');
         const oContainer = document.getElementById('modal-options');
+        const timerText = document.getElementById('timer-display');
 
         qText.innerText = data.question;
         oContainer.innerHTML = '';
+        modal.style.display = 'flex';
+
+        let timeLeft = 25;
+        timerText.innerText = timeLeft;
+        
+        // Reset timer
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerText.innerText = timeLeft;
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                revealAnswer(data, oContainer, key, element);
+            }
+        }, 1000);
 
         data.options.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.innerText = opt;
             btn.onclick = () => {
+                clearInterval(timerInterval);
                 if(opt === data.answer) {
                     btn.classList.add('correct');
-                    usedQuestions[key] = true;
-                    element.classList.add('used');
                 } else {
                     btn.classList.add('wrong');
                 }
+                revealAnswer(data, oContainer, key, element);
             };
             oContainer.appendChild(btn);
         });
-
-        modal.style.display = 'flex';
     }
 
-    function closeModal() {
-        document.getElementById('quiz-modal').style.display = 'none';
-    }
+    function revealAnswer(data, container, key, element) {
+        // Disable all buttons
+        const buttons = container.getElementsByTagName('button');
+        for(let b of buttons) {
+            b.style.pointerEvents = 'none';
+            if(b.innerText === data.answer) b.classList.add('correct');
+        }
 
-    function showCats() {
-        document.getElementById('numbers-view').style.display = 'none';
-        document.getElementById('categories-view').style.display = 'block';
+        // Mark as used & block
+        usedQuestions[key] = true;
+        element.classList.add('used');
+
+        // Wait 3 seconds then go back to categories
+        setTimeout(() => {
+            document.getElementById('quiz-modal').style.display = 'none';
+            document.getElementById('numbers-view').style.display = 'none';
+            document.getElementById('categories-view').style.display = 'block';
+        }, 3000);
     }
 </script>
 
