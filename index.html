@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کێبڕکێی گرووپەکان - وەشانی خێرا و بێ لۆگین</title>
+    <title>کێبڕکێی گرووپەکان - وەشانی کۆتایی و بێ کێشە</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
         :root { 
@@ -15,13 +15,12 @@
         * { user-select: none; box-sizing: border-box; font-family: 'Noto Sans Arabic', sans-serif; }
         body { background: var(--main-bg); color: var(--text-white); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         
-        .box-container { background: var(--card-bg); padding: 50px; border-radius: 20px; border: 1px solid var(--accent-blue); text-align: center; width: 400px; }
-        .action-btn { background: var(--accent-blue); color: black; border: none; padding: 15px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
-        .action-btn:hover { background: var(--hover-blue); color: white; }
+        .box-container { background: var(--card-bg); padding: 50px; border-radius: 20px; border: 1px solid var(--accent-blue); text-align: center; width: 450px; }
+        .action-btn { background: var(--accent-blue); color: black; border: none; padding: 15px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; }
 
         .main-wrapper { display: none; width: 95%; max-width: 1100px; text-align: center; }
-        .categories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
-        .category-card { background: var(--card-bg); padding: 55px 20px; border-radius: 15px; border: 1px solid var(--border-color); cursor: pointer; font-size: 26px; font-weight: 900; transition: 0.3s; }
+        .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .category-card { background: var(--card-bg); padding: 50px 20px; border-radius: 15px; border: 1px solid var(--border-color); cursor: pointer; font-size: 26px; font-weight: 900; transition: 0.3s; }
         .category-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
 
         .numbers-view { display: none; }
@@ -29,11 +28,10 @@
         .number-cell { background: var(--card-bg); border: 1px solid var(--border-color); padding: 25px; font-size: 24px; font-weight: bold; border-radius: 12px; cursor: pointer; }
         .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); }
 
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); align-items: center; justify-content: center; }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); align-items: center; justify-content: center; }
         .modal-content { background: var(--card-bg); padding: 45px; border-radius: 20px; border: 2px solid var(--accent-blue); width: 90%; max-width: 750px; text-align: center; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 35px; }
         .option-btn { background: #0d1117; border: 1px solid var(--border-color); color: white; padding: 20px; border-radius: 12px; cursor: pointer; font-size: 20px; transition: 0.2s; }
-        .option-btn:hover:not(:disabled) { background: var(--hover-blue); }
         
         .correct { background: var(--correct) !important; border-color: var(--correct) !important; }
         .wrong { background: var(--wrong) !important; border-color: var(--wrong) !important; }
@@ -41,7 +39,6 @@
 </head>
 <body>
 
-<!-- شاشەی دەستپێک ڕاستەوخۆ بەبێ لۆگین -->
 <div id="setup-screen" class="box-container">
     <h1 style="font-weight: 900; margin-bottom: 30px;">کێبڕکێی گرووپەکان</h1>
     <button class="action-btn" onclick="document.getElementById('file-input').click()">داخڵکردنی فایلی پرسیارەکان</button>
@@ -50,6 +47,7 @@
 
 <div id="main-game" class="main-wrapper">
     <div id="categories-view">
+        <h2 style="font-weight: 900; font-size: 30px; margin-bottom: 20px;">کەتەگۆرییەکان هەڵبژێرە</h2>
         <div class="categories-grid" id="cat-container"></div>
     </div>
     <div id="numbers-view" class="numbers-view">
@@ -68,17 +66,25 @@
 <script>
     let allData = {};
     let usedQuestions = {};
-    const categories = ["دەنگ", "مێژوو", "هونەری", "وەرزشی", "منداڵان", "تەندروستی", "زانستی", "کەسی", "ئاینی"];
 
     document.getElementById('file-input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                allData = JSON.parse(event.target.result);[cite: 1, 2, 3]
+                allData = JSON.parse(event.target.result);[cite: 1, 2]
+                if (Object.keys(allData).length === 0) {
+                    alert("فایلەکە هیچ زانیارییەکی تێدا نییە!");
+                    return;
+                }
                 startApp();
-            } catch(err) { alert("هەڵە لە ناوەرۆکی فایلی JSON هەیە!"); }
+            } catch(err) { 
+                alert("هەڵە هەیە لە فۆرماتی فایلەکە! دڵنیابە فایلی JSONـی ڕاستە."); 
+            }
         };
-        reader.readAsText(e.target.files[0]);
+        reader.readAsText(file);
     });
 
     function startApp() {
@@ -86,7 +92,9 @@
         document.getElementById('main-game').style.display = 'block';
         const container = document.getElementById('cat-container');
         container.innerHTML = '';
-        categories.forEach(cat => {
+        
+        // خوێندنەوەی کەتەگۆرییەکان ڕاستەوخۆ لە فایلەکە[cite: 3]
+        Object.keys(allData).forEach(cat => {
             const div = document.createElement('div');
             div.className = 'category-card';
             div.innerText = cat;
@@ -101,14 +109,21 @@
         document.getElementById('cat-title').innerText = cat;
         const container = document.getElementById('num-container');
         container.innerHTML = '';
-        const data = allData[cat] || [];[cite: 1, 2]
+        const data = allData[cat] || [];[cite: 1]
 
+        // پیشاندانی ٢٠ ژمارە بۆ هەر کەتەگۆرییەک
         for(let i=0; i<20; i++) {
             const btn = document.createElement('div');
             const key = `${cat}-${i}`;
             btn.className = 'number-cell' + (usedQuestions[key] ? ' used' : '');
             btn.innerText = i + 1;
-            btn.onclick = () => { if(!usedQuestions[key] && data[i]) openModal(data[i], key); };
+            btn.onclick = () => { 
+                if(!usedQuestions[key] && data[i]) {
+                    openModal(data[i], key);
+                } else if (!data[i] && !usedQuestions[key]) {
+                    alert("پرسیار بۆ ئەم ژمارەیە نییە لە فایلەکەدا.");
+                }
+            };
             container.appendChild(btn);
         }
     }
@@ -134,7 +149,6 @@
                     btns.forEach(btn => { if(btn.innerText === qData.answer) btn.classList.add('correct'); });
                 }
 
-                // گەڕانەوەی خۆکار بۆ شاشەی کەتەگۆرییەکان دوای ١ چرکە
                 setTimeout(() => {
                     document.getElementById('question-modal').style.display = 'none';
                     document.getElementById('numbers-view').style.display = 'none';
