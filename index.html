@@ -14,7 +14,7 @@
         .category-name { font-weight: bold; margin-bottom: 10px; color: var(--accent); font-size: 16px; border-bottom: 2px solid var(--accent); padding-bottom: 5px; height: 40px; display: flex; align-items: center; justify-content: center; }
         .cells-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
         .cell { background: #21262d; border: 1px solid #30363d; color: white; padding: 8px 0; cursor: pointer; border-radius: 5px; font-size: 14px; }
-        .cell.used { background: #0d1117; color: #484f58; cursor: not-allowed; border: 1px dashed #30363d; }
+        .cell.used { background: #0d1117 !important; color: #484f58 !important; cursor: not-allowed; border: 1px dashed #30363d; }
         .question-box { background: var(--card-bg); padding: 40px; border-radius: 20px; margin-top: 30px; display: none; border: 2px solid var(--accent); width: 85%; }
         #question-text { font-size: 26px; margin-bottom: 25px; line-height: 1.5; }
         .timer { font-size: 40px; color: var(--danger); font-weight: bold; margin-bottom: 20px; }
@@ -60,14 +60,11 @@
             try {
                 const data = JSON.parse(event.target.result);
                 allData = data;
-                console.log("فایلەکە بە سەرکەوتوویی خوێنرایەوە:", allData);
                 renderGrid();
-                document.getElementById('setup-screen').style.
-document.getElementById('setup-screen').style.display = 'none';
-document.getElementById('main-game').style.display = 'block';
+                document.getElementById('setup-screen').style.display = 'none';
+                document.getElementById('main-game').style.display = 'block';
             } catch (err) {
                 alert("خەتایەک لە فایلی JSON هەیە: " + err.message);
-                console.error(err);
             }
         };
         reader.readAsText(file);
@@ -79,14 +76,17 @@ document.getElementById('main-game').style.display = 'block';
         categories.forEach(cat => {
             const col = document.createElement('div');
             col.className = 'category-column';
-            col.innerHTML = <div class="category-name">${cat}</div>;
+            // لێرە چاککراوە: بەکارهێنانی Backticks
+            col.innerHTML = `<div class="category-name">${cat}</div>`;
+            
             const cellsDiv = document.createElement('div');
             cellsDiv.className = 'cells-grid';
             
             for(let i=1; i<=20; i++) {
                 const btn = document.createElement('button');
                 btn.className = 'cell';
-                btn.id = cell-${cat}-${i};
+                // لێرە چاککراوە: ناسێنەرەکە خراوەتە ناو کەوانە
+                btn.id = `cell-${cat}-${i}`;
                 btn.innerText = i;
                 btn.onclick = () => startQuestion(cat, i);
                 cellsDiv.appendChild(btn);
@@ -98,7 +98,7 @@ document.getElementById('main-game').style.display = 'block';
 
     function startQuestion(cat, num) {
         if (!allData[cat] || !allData[cat][num-1]) {
-            alert("ئەم کەتەگۆرییە یان ئەم ژمارەیە لە فایلەکەتدا نییە! تکایە فایلی JSON بپشکنە.");
+            alert("ئەم پرسیارە لە فایلەکەدا نەدۆزرایەوە!");
             return;
         }
 
@@ -148,10 +148,12 @@ document.getElementById('main-game').style.display = 'block';
         }
 
         setTimeout(() => {
-            const cell = document.getElementById(`cell-${cat}-${num}`);
+            const cellId = `cell-${cat}-${num}`;
+            const cell = document.getElementById(cellId);
             if(cell) {
                 cell.classList.add('used');
                 cell.disabled = true;
+                cell.onclick = null;
             }
             backToHome();
         }, 3000);
@@ -161,7 +163,8 @@ document.getElementById('main-game').style.display = 'block';
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('main-game').style.display = 'block';
         currentGroup = currentGroup === 1 ? 2 : 1;
-        document.getElementById('turn-info').innerText = سەرەی: گرووپی ${currentGroup};
+        // لێرە چاککراوە: تێکستەکە خراوەتە ناو Backticks
+        document.getElementById('turn-info').innerText = `سەرەی: گرووپی ${currentGroup}`;
     }
 </script>
 </body>
