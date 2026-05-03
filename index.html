@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کێبڕکێی گرووپەکان - دیزاینی پاک</title>
+    <title>کێبڕکێی گرووپەکان - دیزاینی کۆتایی</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
 
@@ -15,10 +15,8 @@
             --text-white: #ffffff;
         }
 
-        /* ڕێگری لە دیاریکردنی دەق و جوانکردنی فۆنت */
         * {
             user-select: none;
-            -webkit-user-select: none;
             box-sizing: border-box;
             font-family: 'Noto Sans Arabic', Tahoma, sans-serif;
             -webkit-font-smoothing: antialiased;
@@ -43,6 +41,7 @@
             border: 1px solid var(--accent-blue);
             text-align: center;
             width: 380px;
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.1);
         }
 
         .login-container h2 { font-weight: 900; margin-bottom: 30px; font-size: 28px; }
@@ -59,7 +58,7 @@
             outline: none;
         }
 
-        /* لادانی پڵەیسهۆڵدەر لە کاتی فۆکەس */
+        /* لادانی نوسینی کاڵ لە کاتی کلیک کردن */
         input:focus::placeholder { color: transparent; }
         input:focus::-webkit-input-placeholder { color: transparent; }
 
@@ -73,19 +72,10 @@
             cursor: pointer;
             margin-top: 15px;
             font-size: 18px;
-            transition: 0.2s;
-        }
-        .login-btn:active { transform: scale(0.95); }
-
-        /* --- شاشەی ڕێکخستن (Setup) --- */
-        .setup-box {
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-            width: 320px; 
-            margin: 0 auto;
         }
 
+        /* --- شاشەی Setup --- */
+        .setup-box { display: flex; flex-direction: column; gap: 15px; width: 320px; margin: 0 auto; }
         .action-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -93,11 +83,11 @@
             padding: 18px;
             font-size: 18px;
             font-weight: bold;
-            border-radius: 30px; /* شێوەی دەقاوەق وەک وێنەکان */
+            border-radius: 30px;
             cursor: pointer;
             transition: 0.3s;
         }
-        .action-btn:hover { background: #21262d; border-color: var(--accent-blue); }
+        .action-btn:hover { border-color: var(--accent-blue); background: #21262d; }
 
         /* --- یاری سەرەکی --- */
         .main-wrapper { display: none; width: 95%; max-width: 1100px; text-align: center; }
@@ -116,19 +106,13 @@
             border: 1px solid var(--border-color);
             cursor: pointer;
             font-size: 26px;
-            font-weight: 900; /* فۆنتی زۆر ئەستوور */
+            font-weight: 900;
             transition: 0.3s ease;
         }
+        .category-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
 
-        .category-card:hover { 
-            border-color: var(--accent-blue);
-            background: #1c2128;
-            transform: translateY(-5px);
-        }
-
-        /* --- بەشی ژمارەکان --- */
+        /* --- ژمارەکان --- */
         .numbers-view { display: none; }
-        
         .numbers-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -136,7 +120,6 @@
             max-width: 900px;
             margin: 0 auto;
         }
-
         .number-cell {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -146,26 +129,39 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            transition: 0.2s;
         }
-        .number-cell:hover { border-color: var(--accent-blue); background: #21262d; }
+        .number-cell:hover { border-color: var(--accent-blue); }
         .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); }
 
         .back-btn {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            background: #21262d;
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            z-index: 100;
+            position: fixed; top: 30px; right: 30px;
+            background: #21262d; border: 1px solid var(--border-color);
+            color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer;
         }
 
-        h1.title-display { font-weight: 900; font-size: 45px; margin-bottom: 40px; }
+        /* --- پەنجەرەی پرسیار (Modal) --- */
+        .modal {
+            display: none; position: fixed; z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 40px; border-radius: 20px; border: 2px solid var(--accent-blue);
+            width: 90%; max-width: 750px; text-align: center;
+        }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .option-btn {
+            background: #0d1117; border: 1px solid var(--border-color);
+            color: white; padding: 18px; border-radius: 10px;
+            cursor: pointer; font-size: 19px; transition: 0.3s;
+        }
+        .option-btn:hover { background: var(--accent-blue); color: black; }
+        .close-modal {
+            margin-top: 30px; background: #f85149; border: none;
+            color: white; padding: 10px 30px; border-radius: 8px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -178,9 +174,9 @@
     <button class="login-btn" onclick="handleLogin()">Login</button>
 </div>
 
-<!-- ٢. شاشەی کارەکان (Import/Restart) -->
+<!-- ٢. شاشەی Setup -->
 <div id="setup-screen" style="display:none; text-align: center;">
-    <h1 class="title-display">بەخێربێن</h1>
+    <h1 style="font-weight: 900; font-size: 45px; margin-bottom: 40px;">بەخێربێن</h1>
     <div class="setup-box">
         <button class="action-btn" onclick="document.getElementById('file-input').click()">Import file</button>
         <button class="action-btn" onclick="location.reload()">Restart</button>
@@ -190,47 +186,49 @@
     <input type="file" id="file-input" style="display:none" accept=".json">
 </div>
 
-<!-- ٣. کەتەگۆرییەکان -->
+<!-- ٣. یاریەکە -->
 <div id="main-game" class="main-wrapper">
     <div id="categories-view">
         <div class="categories-grid" id="cat-container"></div>
     </div>
-
-    <!-- ٤. ژمارەکان -->
     <div id="numbers-view" class="numbers-view">
         <button class="back-btn" onclick="showCats()">گەڕانەوە</button>
-        <h1 id="cat-title" class="title-display" style="color: var(--accent-blue);"></h1>
+        <h1 id="cat-title" style="font-weight: 900; font-size: 40px; margin-bottom: 30px; color: var(--accent-blue);"></h1>
         <div id="num-container" class="numbers-grid"></div>
+    </div>
+</div>
+
+<!-- ٤. مۆدێڵی پرسیار -->
+<div id="question-modal" class="modal">
+    <div class="modal-content">
+        <h2 id="modal-q-text" style="font-weight: 900; font-size: 32px;"></h2>
+        <div class="options-grid" id="modal-options"></div>
+        <button class="close-modal" onclick="closeModal()">داخستن</button>
     </div>
 </div>
 
 <script>
     let allData = {};
     let usedQuestions = {};
+    // کەتەگۆرییەکان دەبێت ڕێک وەک ناوەکانی ناو فایلە JSONـەکەت بن[cite: 1, 2]
     const categories = ["دەنگ", "مێژوو", "هونەری", "وەرزشی", "منداڵان", "تەندروستی", "زانستی", "کەسی", "ئاینی"];
 
     function handleLogin() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
-        if(u === "admin" && p === "1234") {
+        if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "1234") {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('setup-screen').style.display = 'block';
-        } else {
-            alert("ناوی بەکارهێنەر یان پاسوۆرد هەڵەیە!");
-        }
+        } else { alert("هەڵەیە!"); }
     }
 
     document.getElementById('file-input').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if(!file) return;
         const reader = new FileReader();
-        reader.onload = function(event) {
+        reader.onload = (event) => {
             try {
-                allData = JSON.parse(event.target.result);
+                allData = JSON.parse(event.target.result); // خوێندنەوەی پرسیارەکان لە فایلی دەرەکی[cite: 3]
                 startApp();
-            } catch(e) { alert("فایلەکە هەڵەیە!"); }
+            } catch(e) { alert("هەڵە لە فایلی JSON هەیە!"); }
         };
-        reader.readAsText(file);
+        reader.readAsText(e.target.files[0]);
     });
 
     function startApp() {
@@ -253,28 +251,46 @@
         document.getElementById('cat-title').innerText = cat;
         const container = document.getElementById('num-container');
         container.innerHTML = '';
-        for(let i=1; i<=20; i++) {
+        
+        const categoryData = allData[cat] || []; // وەرگرتنی لیستەکە لە فایلەکە[cite: 1]
+
+        for(let i=0; i<20; i++) {
             const btn = document.createElement('div');
             const qKey = `${cat}-${i}`;
             btn.className = 'number-cell' + (usedQuestions[qKey] ? ' used' : '');
-            btn.innerText = i;
+            btn.innerText = i + 1;
             btn.onclick = () => {
-                if(!usedQuestions[qKey]) {
-                    // لێرە دەتوانیت فەنکشنی نیشاندانی پرسیار دابنێیت
-                    alert("پرسیاری " + i + "ی کەتەگۆری " + cat);
+                if(!usedQuestions[qKey] && categoryData[i]) {
+                    openModal(categoryData[i]);
                     usedQuestions[qKey] = true;
                     btn.classList.add('used');
+                } else if (!categoryData[i]) {
+                    alert("ئەم ژمارەیە پرسیاری بۆ دانەنراوە لە فایلەکەدا!");
                 }
             };
             container.appendChild(btn);
         }
     }
 
-    function showCats() {
-        document.getElementById('numbers-view').style.display = 'none';
-        document.getElementById('categories-view').style.display = 'block';
+    function openModal(data) {
+        document.getElementById('modal-q-text').innerText = data.question;
+        const optContainer = document.getElementById('modal-options');
+        optContainer.innerHTML = '';
+        data.options.forEach(opt => {
+            const b = document.createElement('button');
+            b.className = 'option-btn';
+            b.innerText = opt;
+            b.onclick = () => {
+                if(opt === data.answer) { b.style.background = "#2ea043"; alert("ڕاستە!"); }
+                else { b.style.background = "#f85149"; alert("هەڵەیە! وەڵام: " + data.answer); }
+            };
+            optContainer.appendChild(b);
+        });
+        document.getElementById('question-modal').style.display = 'flex';
     }
-</script>
 
+    function closeModal() { document.getElementById('question-modal').style.display = 'none'; }
+    function showCats() { document.getElementById('numbers-view').style.display = 'none'; document.getElementById('categories-view').style.display = 'block'; }
+</script>
 </body>
 </html>
