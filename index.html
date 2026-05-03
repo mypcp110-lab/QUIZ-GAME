@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کێبڕکێی گرووپەکان - وەشانی کۆتایی</title>
+    <title>کێبڕکێی گرووپەکان - دیزاینی کۆتایی</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
 
@@ -62,7 +62,7 @@
         .category-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
 
         /* --- Numbers Grid --- */
-        .numbers-view { display: none; }
+        .numbers-view { display: none; position: relative; }
         .numbers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; max-width: 900px; margin: 0 auto; }
         .number-cell {
             background: var(--card-bg);
@@ -75,6 +75,23 @@
             cursor: pointer;
         }
         .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); pointer-events: none; }
+
+        /* --- Back Button --- */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #21262d;
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            z-index: 10;
+        }
+        .back-btn:hover { border-color: var(--accent-blue); }
 
         /* --- Quiz Modal --- */
         .modal-overlay {
@@ -111,13 +128,11 @@
         .option-btn.correct { background: #2ea043 !important; border-color: #3fb950; }
         .option-btn.wrong { background: #da3633 !important; border-color: #f85149; }
         
-        /* --- Timer --- */
         #timer-display {
             font-size: 40px;
             font-weight: 900;
             color: #ffde59;
             margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 222, 89, 0.5);
         }
 
         .title-display { font-weight: 900; font-size: 45px; margin-bottom: 40px; }
@@ -140,6 +155,7 @@
     </div>
 
     <div id="numbers-view" class="numbers-view">
+        <button class="back-btn" onclick="showCats()">گەڕانەوە</button>
         <h1 id="cat-title" class="title-display" style="color: var(--accent-blue);"></h1>
         <div id="num-container" class="numbers-grid"></div>
     </div>
@@ -208,6 +224,11 @@
         }
     }
 
+    function showCats() {
+        document.getElementById('numbers-view').style.display = 'none';
+        document.getElementById('categories-view').style.display = 'block';
+    }
+
     function openQuiz(data, key, element) {
         const modal = document.getElementById('quiz-modal');
         const qText = document.getElementById('modal-question');
@@ -221,7 +242,6 @@
         let timeLeft = 25;
         timerText.innerText = timeLeft;
         
-        // Reset timer
         clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             timeLeft--;
@@ -250,22 +270,18 @@
     }
 
     function revealAnswer(data, container, key, element) {
-        // Disable all buttons
         const buttons = container.getElementsByTagName('button');
         for(let b of buttons) {
             b.style.pointerEvents = 'none';
             if(b.innerText === data.answer) b.classList.add('correct');
         }
 
-        // Mark as used & block
         usedQuestions[key] = true;
         element.classList.add('used');
 
-        // Wait 3 seconds then go back to categories
         setTimeout(() => {
             document.getElementById('quiz-modal').style.display = 'none';
-            document.getElementById('numbers-view').style.display = 'none';
-            document.getElementById('categories-view').style.display = 'block';
+            showCats(); // دەگەڕێتەوە سەر کەتەگۆرییەکان
         }, 3000);
     }
 </script>
