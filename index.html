@@ -59,7 +59,6 @@
             font-weight: 900;
             transition: 0.3s;
         }
-        /* دیزاینە ئەسڵییەکەی خۆت */
         .category-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
 
         /* --- Numbers Grid --- */
@@ -76,7 +75,6 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        /* زیادکردنی شەوق و جووڵە بۆ ژمارەکان ڕێک وەک کەتەگۆرییەکان */
         .number-cell:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
         .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); pointer-events: none; }
 
@@ -139,19 +137,6 @@
             margin-bottom: 20px;
         }
 
-        /* دوگمەی دەستپێکردنی کات */
-        .start-btn-trigger {
-            background: var(--accent-blue);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
         .title-display { font-weight: 900; font-size: 45px; margin-bottom: 40px; }
     </style>
 </head>
@@ -180,10 +165,7 @@
 
 <div id="quiz-modal" class="modal-overlay">
     <div class="modal-content">
-        <div id="timer-area">
-            <button id="start-timer-btn" class="start-btn-trigger" onclick="runTimer()">دەستپێکردنی کات</button>
-            <div id="timer-display" style="display:none">25</div>
-        </div>
+        <div id="timer-display">25</div>
         <h2 id="modal-question"></h2>
         <div id="modal-options" class="options-grid"></div>
     </div>
@@ -193,7 +175,7 @@
     let allData = {};
     let usedQuestions = {};
     let timerInterval;
-    let currentQData, currentKeyRef, currentElemRef;
+    let autoStartTimeout; // بۆ ڕاگرتنی ٣ چرکەکە
     const categories = ["دەنگ", "مێژوو", "هونەری", "وەرزشی", "جوگرافی", "تەندروستی", "زانستی", "کەسی", "ئاینی"];
 
     document.getElementById('file-input').addEventListener('change', function(e) {
@@ -250,19 +232,32 @@
     }
 
     function openQuiz(data, key, element) {
-        currentQData = data; currentKeyRef = key; currentElemRef = element;
         const modal = document.getElementById('quiz-modal');
         const qText = document.getElementById('modal-question');
         const oContainer = document.getElementById('modal-options');
-        
-        document.getElementById('start-timer-btn').style.display = 'inline-block';
-        document.getElementById('timer-display').style.display = 'none';
-        document.getElementById('timer-display').innerText = "25";
+        const timerText = document.getElementById('timer-display');
 
         qText.innerText = data.question;
         oContainer.innerHTML = '';
         modal.style.display = 'flex';
+        
+        let timeLeft = 25;
+        timerText.innerText = timeLeft;
+        
         clearInterval(timerInterval);
+        clearTimeout(autoStartTimeout);
+
+        // دوای ٣ چرکە کاتەکە دەستپێدەکات
+        autoStartTimeout = setTimeout(() => {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerText.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    revealAnswer(data, oContainer, key, element);
+                }
+            }, 1000);
+        }, 3000);
 
         data.options.forEach(opt => {
             const btn = document.createElement('button');
@@ -270,6 +265,7 @@
             btn.innerText = opt;
             btn.onclick = () => {
                 clearInterval(timerInterval);
+                clearTimeout(autoStartTimeout); // ئەگەر پێش ٣ چرکەکە وەڵامی دایەوە
                 if(opt === data.answer) btn.classList.add('correct');
                 else btn.classList.add('wrong');
                 revealAnswer(data, oContainer, key, element);
@@ -278,32 +274,21 @@
         });
     }
 
-    function runTimer() {
-        document.getElementById('start-timer-btn').style.display = 'none';
-        document.getElementById('timer-display').style.display = 'block';
-        let timeLeft = 25;
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            document.getElementById('timer-display').innerText = timeLeft;
-            if(timeLeft <= 0) {
-                clearInterval(timerInterval);
-                revealAnswer(currentQData, document.getElementById('modal-options'), currentKeyRef, currentElemRef);
-            }
-        }, 1000);
-    }
-
     function revealAnswer(data, container, key, element) {
         const buttons = container.getElementsByTagName('button');
         for(let b of buttons) {
             b.style.pointerEvents = 'none';
             if(b.innerText === data.answer) b.classList.add('correct');
         }
+
         usedQuestions[key] = true;
         element.classList.add('used');
+
+        // دوای ٥ چرکە پرسیارەکە لادەچێت
         setTimeout(() => {
             document.getElementById('quiz-modal').style.display = 'none';
             showCats();
-        }, 3000);
+        }, 5000);
     }
 </script>
 
