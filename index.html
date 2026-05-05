@@ -59,7 +59,12 @@
             font-weight: 900;
             transition: 0.3s;
         }
-        .category-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
+        /* گۆڕانکاری لێرەدایە: زیادکردنی شەوق و جووڵە */
+        .category-card:hover { 
+            border-color: var(--accent-blue); 
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px var(--accent-blue);
+        }
 
         /* --- Numbers Grid --- */
         .numbers-view { display: none; position: relative; }
@@ -73,6 +78,13 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
+            transition: 0.3s; /* بۆ ئەوەی شەوقەکە بە نەرمی بێت */
+        }
+        /* داواکاری دووەم: شەوقدانەوەی ژمارەکان وەک کەتەگۆرییەکان */
+        .number-cell:hover { 
+            border-color: var(--accent-blue); 
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px var(--accent-blue);
         }
         .number-cell.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); pointer-events: none; }
 
@@ -135,6 +147,21 @@
             margin-bottom: 20px;
         }
 
+        /* ستایلی دوگمەی دەستپێکردنی کات */
+        .start-timer-btn {
+            background: #ffde59;
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .start-timer-btn:hover { background: #fff; }
+
         .title-display { font-weight: 900; font-size: 45px; margin-bottom: 40px; }
     </style>
 </head>
@@ -163,7 +190,9 @@
 
 <div id="quiz-modal" class="modal-overlay">
     <div class="modal-content">
-        <div id="timer-display">25</div>
+        <!-- داواکاری یەکەم: دوگمەی دەستپێکردن -->
+        <button id="btn-start-timer" class="start-timer-btn" onclick="actualTimerStart()">دەستپێکردنی کات</button>
+        <div id="timer-display" style="display:none">25</div>
         <h2 id="modal-question"></h2>
         <div id="modal-options" class="options-grid"></div>
     </div>
@@ -173,6 +202,9 @@
     let allData = {};
     let usedQuestions = {};
     let timerInterval;
+    let currentQuestionData = null;
+    let currentKey = null;
+    let currentElement = null;
     const categories = ["دەنگ", "مێژوو", "هونەری", "وەرزشی", "جوگرافی", "تەندروستی", "زانستی", "کەسی", "ئاینی"];
 
     document.getElementById('file-input').addEventListener('change', function(e) {
@@ -208,7 +240,6 @@
         document.getElementById('cat-title').innerText = cat;
         const container = document.getElementById('num-container');
         container.innerHTML = '';
-
         const categoryQuestions = allData[cat] || [];
 
         for(let i=1; i<=20; i++) {
@@ -230,27 +261,26 @@
     }
 
     function openQuiz(data, key, element) {
+        currentQuestionData = data;
+        currentKey = key;
+        currentElement = element;
+
         const modal = document.getElementById('quiz-modal');
         const qText = document.getElementById('modal-question');
         const oContainer = document.getElementById('modal-options');
         const timerText = document.getElementById('timer-display');
+        const startBtn = document.getElementById('btn-start-timer');
 
         qText.innerText = data.question;
         oContainer.innerHTML = '';
-        modal.style.display = 'flex';
-
-        let timeLeft = 25;
-        timerText.innerText = timeLeft;
         
+        // شاردنەوەی کات و پیشاندانی دوگمەی دەستپێکردن
+        timerText.style.display = 'none';
+        startBtn.style.display = 'inline-block';
+        timerText.innerText = "25";
+        
+        modal.style.display = 'flex';
         clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            timerText.innerText = timeLeft;
-            if(timeLeft <= 0) {
-                clearInterval(timerInterval);
-                revealAnswer(data, oContainer, key, element);
-            }
-        }, 1000);
 
         data.options.forEach(opt => {
             const btn = document.createElement('button');
@@ -269,6 +299,25 @@
         });
     }
 
+    function actualTimerStart() {
+        const timerText = document.getElementById('timer-display');
+        const startBtn = document.getElementById('btn-start-timer');
+        const oContainer = document.getElementById('modal-options');
+        
+        startBtn.style.display = 'none';
+        timerText.style.display = 'block';
+        
+        let timeLeft = 25;
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerText.innerText = timeLeft;
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                revealAnswer(currentQuestionData, oContainer, currentKey, currentElement);
+            }
+        }, 1000);
+    }
+
     function revealAnswer(data, container, key, element) {
         const buttons = container.getElementsByTagName('button');
         for(let b of buttons) {
@@ -281,7 +330,7 @@
 
         setTimeout(() => {
             document.getElementById('quiz-modal').style.display = 'none';
-            showCats(); // دەگەڕێتەوە سەر کەتەگۆرییەکان
+            showCats();
         }, 3000);
     }
 </script>
